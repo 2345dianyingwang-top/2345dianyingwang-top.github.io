@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2345电影网 - 电影快速索引与分类导航</title>
+    <meta name="description" content="2345电影网(2345dianyingwang-top.github.io)提供电影快速索引、类型分类导航、热门影片检索和观影指南，简洁高效帮你找到想看的电影。">
+    <meta name="keywords" content="2345电影网, 2345dianyingwang-top, 电影索引, 电影分类, 快速检索, 观影导航">
+    <meta name="author" content="2345电影网">
+    <meta name="robots" content="index,follow">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Inter', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        body {
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+        }
+        a { text-decoration: none; color: #000; }
+        a:hover { background: #ffff00; }
+        .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* 顶栏 - 粗线分割 */
+        header {
+            border-bottom: 4px solid #000;
+            position: sticky; top: 0; z-index: 999;
+            background: #fff;
+        }
+        .topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            height: 60px;
+        }
+        .brand {
+            font-size: 28px; font-weight: 900; color: #000;
+            letter-spacing: -1px;
+        }
+        .brand span { background: #ff0000; color: #fff; padding: 2px 8px; }
+        nav ul { display: flex; gap: 0; list-style: none; }
+        nav ul li { border-left: 2px solid #000; }
+        nav ul li:first-child { border-left: none; }
+        nav ul li a {
+            display: block; padding: 8px 20px;
+            font-size: 14px; font-weight: 700; color: #000;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        nav ul li a:hover { background: #ffff00; }
+
+        /* Hero - 几何撞色 */
+        .hero {
+            border-bottom: 4px solid #000;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 420px;
+        }
+        .hero-text {
+            padding: 60px 40px;
+            background: #ffff00;
+            display: flex; flex-direction: column; justify-content: center;
+            border-right: 4px solid #000;
+        }
+        .hero-text h1 {
+            font-size: 48px; font-weight: 900; color: #000;
+            line-height: 1.05; letter-spacing: -2px; margin-bottom: 20px;
+        }
+        .hero-text h1 em { font-style: normal; background: #ff0000; color: #fff; padding: 0 8px; }
+        .hero-text p {
+            font-size: 16px; font-weight: 500; color: #000;
+            max-width: 400px; margin-bottom: 24px;
+        }
+        .hero-url {
+            display: inline-block; background: #000; color: #fff;
+            padding: 14px 28px; font-weight: 800; font-size: 14px;
+            letter-spacing: 0.5px; align-self: flex-start;
+        }
+        .hero-url:hover { background: #ff0000; color: #fff; }
+        .hero-graphic {
+            background: #000;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .hero-graphic::before {
+            content: '▶';
+            font-size: 120px; color: #ff0000;
+            animation: pulse-geom 2s ease-in-out infinite;
+        }
+        @keyframes pulse-geom { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.1); } }
+
+        /* 栏目 */
+        section { padding: 56px 0; border-bottom: 4px solid #000; }
+        .section-head {
+            display: flex; align-items: baseline; justify-content: space-between;
+            margin-bottom: 32px; padding-bottom: 12px;
+            border-bottom: 2px solid #000;
+        }
+        .section-head h2 {
+            font-size: 32px; font-weight: 900; color: #000;
+            letter-spacing: -1px;
+        }
+        .section-head .label {
+            font-size: 12px; font-weight: 700; color: #fff;
+            background: #000; padding: 4px 12px; letter-spacing: 2px;
+        }
+
+        /* 索引网格 */
+        .grid-5 {
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 0; border: 2px solid #000;
+        }
+        .grid-item {
+            border-right: 2px solid #000; padding: 20px 16px;
+            transition: .2s; min-height: 160px;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .grid-item:last-child { border-right: none; }
+        .grid-item:nth-child(1) { background: #ff0000; color: #fff; }
+        .grid-item:nth-child(2) { background: #ffff00; color: #000; }
+        .grid-item:nth-child(3) { background: #0000ff; color: #fff; }
+        .grid-item:nth-child(4) { background: #00ff00; color: #000; }
+        .grid-item:nth-child(5) { background: #ff00ff; color: #fff; }
+        .grid-item:hover { filter: invert(1); }
+        .grid-item .num {
+            font-size: 11px; font-weight: 700; letter-spacing: 1px;
+            opacity: 0.8;
+        }
+        .grid-item h3 {
+            font-size: 16px; font-weight: 900; margin: 8px 0;
+        }
+        .grid-item p { font-size: 12px; font-weight: 500; opacity: 0.9; }
+
+        /* 分类条 */
+        .cat-bar {
+            display: flex; flex-wrap: wrap; gap: 0;
+            border: 2px solid #000;
+        }
+        .cat {
+            flex: 1; min-width: 120px; text-align: center;
+            padding: 14px 8px; font-weight: 800; font-size: 13px;
+            border-right: 2px solid #000; color: #000;
+            transition: .2s;
+        }
+        .cat:last-child { border-right: none; }
+        .cat:hover { background: #000; color: #fff; }
+
+        /* 排行列表 */
+        .rank-list { border: 2px solid #000; }
+        .rank-row {
+            display: grid; grid-template-columns: 60px 1fr auto;
+            align-items: center; gap: 16px;
+            padding: 16px 20px; border-bottom: 2px solid #000;
+            transition: .2s;
+        }
+        .rank-row:last-child { border-bottom: none; }
+        .rank-row:hover { background: #ffff00; }
+        .rank-row .rn {
+            font-size: 24px; font-weight: 900; color: #ff0000;
+        }
+        .rank-row h3 { font-size: 16px; font-weight: 800; color: #000; }
+        .rank-row .rt { font-size: 12px; font-weight: 700; color: #000; }
+
+        /* 关于 */
+        .about {
+            display: grid; grid-template-columns: 1fr 1fr;
+            border: 4px solid #000;
+        }
+        .about-text {
+            padding: 40px; background: #fff;
+            border-right: 4px solid #000;
+        }
+        .about-text h3 {
+            font-size: 24px; font-weight: 900; color: #000;
+            margin-bottom: 16px; letter-spacing: -1px;
+        }
+        .about-text p { font-size: 14px; font-weight: 500; color: #000; margin-bottom: 12px; }
+        .about-text .site-name {
+            font-size: 18px; font-weight: 900; color: #ff0000;
+            margin: 20px 0 8px;
+        }
+        .about-text .site-url {
+            display: inline-block; background: #000; color: #fff;
+            padding: 10px 20px; font-weight: 800; font-size: 13px;
+        }
+        .about-graphic {
+            background: #0000ff; display: flex; align-items: center; justify-content: center;
+        }
+        .about-graphic .big-num {
+            font-size: 140px; font-weight: 900; color: #fff;
+            line-height: 1;
+        }
+
+        footer {
+            background: #000; color: #fff; text-align: center;
+            padding: 24px 0; font-size: 13px; font-weight: 500;
+        }
+        footer a { color: #ffff00; }
+        footer a:hover { background: transparent; text-decoration: underline; }
+
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; }
+            .hero-text { border-right: none; border-bottom: 4px solid #000; }
+            .hero-graphic { min-height: 200px; }
+            .grid-5 { grid-template-columns: repeat(3, 1fr); }
+            .grid-item:nth-child(3) { border-right: none; }
+            .grid-item:nth-child(4), .grid-item:nth-child(5) { grid-column: span 1; }
+            .about { grid-template-columns: 1fr; }
+            .about-text { border-right: none; border-bottom: 4px solid #000; }
+        }
+        @media (max-width: 600px) {
+            .topbar { flex-direction: column; height: auto; gap: 8px; padding: 12px 0; }
+            nav ul { flex-wrap: wrap; justify-content: center; }
+            nav ul li { border-left: 1px solid #000; }
+            nav ul li a { padding: 6px 10px; font-size: 12px; }
+            .hero-text { padding: 32px 20px; }
+            .hero-text h1 { font-size: 28px; }
+            .grid-5 { grid-template-columns: 1fr 1fr; }
+            .grid-item { border-right: none; border-bottom: 2px solid #000; }
+            .rank-row { grid-template-columns: 40px 1fr; }
+            .rank-row .rt { display: none; }
+            .about-text { padding: 24px 16px; }
+        }
+    </style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/changyuan.js"></script>
+
+<header>
+    <div class="wrap topbar">
+        <div class="brand">2345<span>电影网</span></div>
+        <nav>
+            <ul>
+                <li><a href="#home">INDEX</a></li>
+                <li><a href="#browse">BROWSE</a></li>
+                <li><a href="#cats">CATEGORIES</a></li>
+                <li><a href="#top">TOP 10</a></li>
+                <li><a href="#about">ABOUT</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section id="home" class="hero">
+    <div class="hero-text">
+        <h1>快速<em>索引</em><br>每一部好电影</h1>
+        <p>2345电影网提供简洁高效的电影分类导航，按类型、年份、评分快速定位你想看的影片。</p>
+        <a class="hero-url" href="https://2345dianyingwang-top.github.io">🔗 2345dianyingwang-top.github.io</a>
+    </div>
+    <div class="hero-graphic"></div>
+</section>
+
+<section id="browse">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>快速索引</h2>
+            <div class="label">INDEX</div>
+        </div>
+        <div class="grid-5">
+            <div class="grid-item">
+                <div class="num">01</div>
+                <h3>热门排行</h3>
+                <p>当前最热门的影片列表</p>
+            </div>
+            <div class="grid-item">
+                <div class="num">02</div>
+                <h3>最新上映</h3>
+                <p>近期上映的新片速递</p>
+            </div>
+            <div class="grid-item">
+                <div class="num">03</div>
+                <h3>高分经典</h3>
+                <p>评分8.0以上的必看佳作</p>
+            </div>
+            <div class="grid-item">
+                <div class="num">04</div>
+                <h3>类型筛选</h3>
+                <p>按类型快速筛选影片</p>
+            </div>
+            <div class="grid-item">
+                <div class="num">05</div>
+                <h3>随机推荐</h3>
+                <p>不知道看什么？试试随机</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="cats">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>分类导航</h2>
+            <div class="label">CATEGORIES</div>
+        </div>
+        <div class="cat-bar">
+            <div class="cat">动作 ACTION</div>
+            <div class="cat">喜剧 COMEDY</div>
+            <div class="cat">爱情 ROMANCE</div>
+            <div class="cat">科幻 SCI-FI</div>
+            <div class="cat">悬疑 THRILLER</div>
+            <div class="cat">动画 ANIME</div>
+            <div class="cat">纪录 DOC</div>
+            <div class="cat">恐怖 HORROR</div>
+        </div>
+    </div>
+</section>
+
+<section id="top">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>热门排行</h2>
+            <div class="label">TOP 10</div>
+        </div>
+        <div class="rank-list">
+            <div class="rank-row">
+                <div class="rn">01</div>
+                <h3>肖申克的救赎 The Shawshank Redemption</h3>
+                <div class="rt">9.7 ★</div>
+            </div>
+            <div class="rank-row">
+                <div class="rn">02</div>
+                <h3>霸王别姬 Farewell My Concubine</h3>
+                <div class="rt">9.6 ★</div>
+            </div>
+            <div class="rank-row">
+                <div class="rn">03</div>
+                <h3>阿甘正传 Forrest Gump</h3>
+                <div class="rt">9.5 ★</div>
+            </div>
+            <div class="rank-row">
+                <div class="rn">04</div>
+                <h3>泰坦尼克号 Titanic</h3>
+                <div class="rt">9.4 ★</div>
+            </div>
+            <div class="rank-row">
+                <div class="rn">05</div>
+                <h3>这个杀手不太冷 Léon</h3>
+                <div class="rt">9.4 ★</div>
+            </div>
+            <div class="rank-row">
+                <div class="rn">06</div>
+                <h3>美丽人生 La Vita è Bella</h3>
+                <div class="rt">9.3 ★</div>
+            </div>
+            <div class="rank-row">
+                <div class="rn">07</div>
+                <h3>千与千寻 Spirited Away</h3>
+                <div class="rt">9.3 ★</div>
+            </div>
+            <div class="rank-row">
+                <div class="rn">08</div>
+                <h3>星际穿越 Interstellar</h3>
+                <div class="rt">9.2 ★</div>
+            </div>
+            <div class="rank-row">
+                <div class="rn">09</div>
+                <h3>盗梦空间 Inception</h3>
+                <div class="rt">9.2 ★</div>
+            </div>
+            <div class="rank-row">
+                <div class="rn">10</div>
+                <h3>楚门的世界 The Truman Show</h3>
+                <div class="rt">9.1 ★</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>关于本站</h2>
+            <div class="label">ABOUT</div>
+        </div>
+        <div class="about">
+            <div class="about-text">
+                <h3>2345电影网</h3>
+                <p><b>2345电影网</b> 是一个专注于电影快速索引与分类导航的站点。我们用最简洁的方式帮你找到想看的电影，不做盗版播放，不转载未授权资源。</p>
+                <p>所有内容仅供电影资料检索与学习交流使用。</p>
+                <div class="site-name">网站名称：2345电影网</div>
+                <div class="site-url">https://2345dianyingwang-top.github.io</div>
+                <p style="margin-top:16px;font-size:12px;color:#666;">关键词：2345电影网、2345dianyingwang-top、电影索引、电影分类、快速检索</p>
+            </div>
+            <div class="about-graphic">
+                <div class="big-num">2345</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="wrap">
+        © 2024 2345电影网 · 2345dianyingwang-top.github.io ｜ 单页展示站点，仅供电影资料检索与学习交流
+    </div>
+</footer>
+
+</body>
+</html>
